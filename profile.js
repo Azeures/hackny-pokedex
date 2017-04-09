@@ -1,3 +1,5 @@
+const util = require('util')
+
 import React, { Component } from 'react';
 import {
   Dimensions,
@@ -8,6 +10,7 @@ import {
   Image,
   View
 } from 'react-native';
+import extractInfo from './ExtractInformation.js';
 
 class Profile extends Component {
 
@@ -20,20 +23,38 @@ class Profile extends Component {
   }
 
   renderImage() {
-  return (
-    <View>
-      <Image
-        source={{ uri: this.props.path }}
-        style={styles.preview}
-      />
-      <Text
-        style={styles.cancel}
-        onPress={() => this.props.navigator.push({
-                id: 'ViewFinder', })}
-      >Cancel
-      </Text>
-    </View>
-  );
+    extractInfo("https://scontent.xx.fbcdn.net/v/t31.0-8/17545367_10155225197032318_3055188002402293972_o.jpg?oh=2d89029b8928e4bec3d151ac7e99b383&oe=59912318", 
+    function(response) {
+      this.state = {response};
+    });
+
+    contents = this.state.response.map(function(person) {
+      return (
+        <View>
+          <Text>
+            person.name
+          </Text>
+        </View>
+      );
+    });
+
+    return (
+      <View>
+        <Image
+          source={{ uri: this.props.path }}
+          style={styles.preview}
+        />
+        <Text
+          style={styles.cancel}
+          onPress={() => this.props.navigator.push({
+                  id: 'ViewFinder', })}
+        >Cancel
+        </Text>
+        <View>
+          {contents}
+        </View>
+      </View>
+      );
 }
 
 loading() {
