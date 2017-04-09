@@ -1,8 +1,5 @@
 const util = require('util')
 
-var await = require('asyncawait/await');
-var async = require('asyncawait/async');
-
 var mongodb = require('mongodb');
 var MongoClient = require('mongodb').MongoClient;
 var ObjectID = require('mongodb').ObjectID;
@@ -14,53 +11,67 @@ var app = new Clarifai.App(
     'fOCItDmW0xPPHKB_xc4aS8nUCkJpD_ltgg5uMJep'
 );
 
-var detect = async(function(Profiles, encodedImage, callback) {
+function countNumberOfFaces(encodedImage, callback) {
+	app.models.predict("a403429f2ddf4b49b307e318f00e528b", encodedImage).then(
+	function(response) {
+		let {outputs} = response;
+		var regions = outputs[0].data.regions;
+		numFaces = regions.length;
+		console.log(numFaces + ' faces detected.');		
+		return callback(numFaces);
+	},
+	function(err) {
+		console.log(err.message);
+	});
+}
+
+// var detect = async(function(Profiles, encodedImage, callback) {
+function detect(Profiles, encodedImage, callback) {
 	var results = [];
+	countNumberOfFaces(encodedImage, function(numFaces) {
+		console.log(numFaces + ' faces detected.');
 
-	// Detect people in image
-	app.models.predict("Pokedex", encodedImage).then(
-		function(response) {
-			let {outputs} = response;
-			var concepts = outputs[0].data.concepts;
-			// console.log(util.inspect(concepts, {showHidden:false, depth:null}));
+		// Detect people in image
+		app.models.predict("Pokedex", encodedImage).then(response => {
+				let {outputs} = response;
+				var concepts = outputs[0].data.concepts;
+				// console.log(util.inspect(concepts, {showHidden:false, depth:null}));
 
-			var count = 0;
+				var count = 0;
 
-			await(concepts.forEach(async(function(concept) {
-				if (concept.value > 0) {
-					var profileId = concept.id;
-					console.log('Querying MongoDB for id \"' + profileId + '\"(' + concept.value + ')...');
+				concepts.forEach(concept => {
+					if (count < numFaces) {
+						var profileId = concept.id;
+						console.log('Querying MongoDB for id \"' + profileId + '\"(' + concept.value + ')...');
 
-					// Make MongoDB call to find profile
-					var profile = await(Profiles.findOne({"_id": profileId}));
+						// Make MongoDB call to find profile
+						Profiles.findOne({"_id": profileId}).then(profile => {
+							if (profile != null && count < numFaces) {
+								results.push(profile);
+								console.log('Added profile ' + profile.name + ' to results');
+								count += 1;
+							}
 
-					// console.log('Done querying MongoDB for id ' + profileId);
-					// console.log(util.inspect(profile, {showHidden:false, depth:null}));
+							console.log('Count: ' + count + '/' + numFaces);
+							console.log(count < numFaces);
+						});
 
-					if (profile != null) {
-						results.push(profile);
+						// console.log('Done querying MongoDB for id ' + profileId);
+						// console.log(util.inspect(profile, {showHidden:false, depth:null}));
 					}
+				});
 
-					console.log('Added profile ' + profileId + ' to results');
-				}
-
-				count += 1;
-
-				if (count >= concepts.length) {
-					console.log('Count: ' + count + '/' + concepts.length);
-					return callback(results);
-				}
-			})));
-		},
-		function(err) {
-			console.log(err.message);
-		}
-	);
-});
+				return callback(results);
+			}, err => {
+				console.log(err.message);
+			});
+	});
+};
+// });
 
 // Input: Base64 Encoded String for Image
 // Output: JSON Array of profiles 
-var extractInformation = async(function(encodedImage, callback) {
+function extractInformation(encodedImage, callback) {
 	var db = MongoClient.connect(MONGO_URL, (err, db) => {
 		if (err) {
 			console.log(err.message);
@@ -68,9 +79,9 @@ var extractInformation = async(function(encodedImage, callback) {
 		var Profiles = db.collection('profiles');
 		return detect(Profiles, encodedImage, callback);
 	});
-});
+};
 
-extractInformation("https://scontent-lga3-1.xx.fbcdn.net/v/t31.0-8/17855098_10154682235193049_4968611357689480948_o.jpg?oh=fcd9987f01d9a451856676370a6c4c92&oe=595395D4", function(response) {
+extractInformation("https://scontent-lga3-1.xx.fbcdn.net/v/t31.0-8/17545367_10155225197032318_3055188002402293972_o.jpg?oh=2d89029b8928e4bec3d151ac7e99b383&oe=59912318", function(response) {
 	console.log(util.inspect(response, {showHidden:false, depth:null}));
 })
 
