@@ -14,7 +14,6 @@ const Profile = require('./profile');
 
 class Main extends Component {
 
-  getInitialState() {}
   render() {
     return (
       <Navigator
