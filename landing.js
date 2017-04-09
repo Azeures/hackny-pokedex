@@ -16,7 +16,7 @@ class Landing extends Component {
         <View style={{flex: 1, backgroundColor: 'powderblue'}} />
         <View style={{flex: 2, backgroundColor: 'skyblue'}} />
         <View style={{flex: 3, backgroundColor: 'steelblue', justifyContent: 'center', alignItems: 'center'}}>
-          <Text style={styles.circleButton} onPress={this.routeCamera.bind(this)}>Ooh</Text>
+          <Text style={styles.button} onPress={this.routeCamera.bind(this)}>Ooh</Text>
         </View>
       </View>
     );
@@ -33,15 +33,18 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
   },
-  circleButton: {
+  button: {
+    fontFamily: 'Helvetica Neue',
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    overflow: 'hidden',
+    fontSize: 24,
     flex: 0,
-    borderColor: 'red',
-    backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
+    textAlign: 'center',
+    borderRadius: 5,
     height: 50,
-    width: 50,
+    width: 200,
   }
 });
 
