@@ -28,7 +28,16 @@ class ViewFinder extends Component {
     const options = {};
     //options.location = ...
     this.camera.capture({metadata: options})
-      .then((data) => console.log(data))
+      .then((data) => {
+        console.log(data);
+        // this.setState = ({ path: data.path });
+        this.props.navigator.push({
+          id: 'Profile',
+          props: {
+            path: data.path
+          },
+        })
+      })
       .catch(err => console.error(err));
   }
 }

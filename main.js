@@ -10,8 +10,11 @@ import {
 
 const Landing = require('./landing');
 const ViewFinder = require('./viewFinder');
+const Profile = require('./profile');
 
 class Main extends Component {
+
+  getInitialState() {}
   render() {
     return (
       <Navigator
@@ -32,7 +35,7 @@ class Main extends Component {
       case 'ViewFinder':
         return(<ViewFinder navigator={navigator} title="ViewFinder"/>)
       case 'Profile':
-        return(<Profile navigator={navigator} title="Profile"/>)
+        return(<Profile navigator={navigator} {...route.props} title="Profile"/>)
     }
   }
 }
