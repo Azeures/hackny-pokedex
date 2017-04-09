@@ -3,8 +3,9 @@ import {
   Dimensions,
   StyleSheet,
   Text,
-  TouchableHighlight,
+  TouchableOpacity,
   Navigator,
+  Image,
   View
 } from 'react-native';
 
@@ -12,13 +13,16 @@ class Landing extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <View style={{flex: 1, backgroundColor: 'powderblue'}} />
-        <View style={{flex: 2, backgroundColor: 'skyblue'}} />
-        <View style={{flex: 3, backgroundColor: 'steelblue', justifyContent: 'center', alignItems: 'center'}}>
-          <Text style={styles.button} onPress={this.routeCamera.bind(this)}>Ooh</Text>
+      <Image style={styles.container} source={require('./assets/landing-page-bg.png')}>
+        <View style={{flex: 1, backgroundColor: 'transparent'}}>
         </View>
-      </View>
+        <Image source={require('./assets/logo.png')}  style={{flex: 4, backgroundColor: 'transparent'}} />
+        <TouchableOpacity style={{flex: 1}} onPress={this.routeCamera.bind(this)}>
+          <Image
+            source={require('./assets/camera-icon.png')}
+            style={{flex: 1, backgroundColor: 'transparent'}}/>
+        </TouchableOpacity>
+      </Image>
     );
   }
   routeCamera() {
@@ -34,17 +38,18 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   button: {
-    fontFamily: 'Helvetica Neue',
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    // fontFamily: 'Helvetica Neue',
+    // textAlign: 'center',
+    // fontSize: 24,
+    backgroundColor: 'rgba(255, 216, 77, 0.5)',
     overflow: 'hidden',
-    fontSize: 24,
-    flex: 0,
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    textAlign: 'center',
     borderRadius: 5,
-    height: 50,
+    height: 200,
     width: 200,
+    resizeMode: 'cover',
   }
 });
 
