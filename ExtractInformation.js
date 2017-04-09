@@ -61,7 +61,3 @@ var extractInformation = async(function(encodedImage, callback) {
 		}
 	);
 });
-
-
-
-
