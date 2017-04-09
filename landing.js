@@ -34,6 +34,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   circleButton: {
+    flex: 0,
     borderColor: 'red',
     backgroundColor: 'white',
     justifyContent: 'center',
