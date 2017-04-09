@@ -14,12 +14,11 @@ var app = new Clarifai.App(
     'fOCItDmW0xPPHKB_xc4aS8nUCkJpD_ltgg5uMJep'
 );
 
-// Input: Base64 Encoded String for Image
-// Output: JSON Array of profiles 
-var extractInformation = async(function(encodedImage, callback) {
+var detect = async(function(Profiles, encodedImage, callback) {
 	var results = [];
+
 	// Detect people in image
-	app.models.predict("Pokedex", {base64:encodedImage}).then(
+	app.models.predict("Pokedex", encodedImage).then(
 		function(response) {
 			let {outputs} = response;
 			var concepts = outputs[0].data.concepts;
@@ -28,32 +27,29 @@ var extractInformation = async(function(encodedImage, callback) {
 			var count = 0;
 
 			await(concepts.forEach(async(function(concept) {
-				var profileId = concept.id;
-				console.log('Querying MongoDB for id \"' + profileId + '\"...');
-
-				var db = MongoClient.connect(MONGO_URL, (err, db) => {
-					if (err) {
-						console.log(err.message);
-					}
-
-					var Profiles = db.collection('profiles');
-
+				if (concept.value > 0) {
+					var profileId = concept.id;
+					console.log('Querying MongoDB for id \"' + profileId + '\"(' + concept.value + ')...');
 
 					// Make MongoDB call to find profile
 					var profile = await(Profiles.findOne({"_id": profileId}));
 
-					console.log('Done querying MongoDB for id ' + profileId);
-					console.log(util.inspect(profile, {showHidden:false, depth:null}));
+					// console.log('Done querying MongoDB for id ' + profileId);
+					// console.log(util.inspect(profile, {showHidden:false, depth:null}));
 
-					results.push(profile);
-					count += 1;
+					if (profile != null) {
+						results.push(profile);
+					}
 
 					console.log('Added profile ' + profileId + ' to results');
+				}
 
-					if (count >= concepts.length) {
-						return callback(results);
-					}
-				});
+				count += 1;
+
+				if (count >= concepts.length) {
+					console.log('Count: ' + count + '/' + concepts.length);
+					return callback(results);
+				}
 			})));
 		},
 		function(err) {
@@ -62,4 +58,20 @@ var extractInformation = async(function(encodedImage, callback) {
 	);
 });
 
-module.exports('extractInformation');
+// Input: Base64 Encoded String for Image
+// Output: JSON Array of profiles 
+var extractInformation = async(function(encodedImage, callback) {
+	var db = MongoClient.connect(MONGO_URL, (err, db) => {
+		if (err) {
+			console.log(err.message);
+		}
+		var Profiles = db.collection('profiles');
+		return detect(Profiles, encodedImage, callback);
+	});
+});
+
+extractInformation("https://scontent-lga3-1.xx.fbcdn.net/v/t31.0-8/17855098_10154682235193049_4968611357689480948_o.jpg?oh=fcd9987f01d9a451856676370a6c4c92&oe=595395D4", function(response) {
+	console.log(util.inspect(response, {showHidden:false, depth:null}));
+})
+
+module.exports = extractInformation;
