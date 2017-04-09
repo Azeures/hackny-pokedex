@@ -16,7 +16,7 @@ class Landing extends Component {
       <Image style={styles.container} source={require('./assets/landing-page-bg.png')}>
         <View style={{flex: 1, backgroundColor: 'transparent'}}>
         </View>
-        <Image source={require('./assets/logo.png')}  style={{flex: 4, backgroundColor: 'transparent'}} />
+        <Image source={require('./assets/logo.png')}  style={{flex: 5, backgroundColor: 'transparent'}} />
         <TouchableOpacity style={{flex: 1}} onPress={this.routeCamera.bind(this)}>
           <Image
             source={require('./assets/camera-icon.png')}
@@ -35,6 +35,8 @@ class Landing extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     flexDirection: 'column',
   },
   button: {
@@ -43,12 +45,12 @@ const styles = StyleSheet.create({
     // fontSize: 24,
     backgroundColor: 'rgba(255, 216, 77, 0.5)',
     overflow: 'hidden',
-    flex: 1,
+    // flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 5,
-    height: 200,
-    width: 200,
+    // borderRadius: 5,
+    // height: 200,
+    // width: 200,
     resizeMode: 'cover',
   }
 });

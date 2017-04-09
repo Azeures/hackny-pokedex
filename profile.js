@@ -1,5 +1,3 @@
-const util = require('util')
-
 import React, { Component } from 'react';
 import {
   Dimensions,
@@ -23,7 +21,7 @@ class Profile extends Component {
   }
 
   renderImage() {
-    extractInfo("https://scontent.xx.fbcdn.net/v/t31.0-8/17545367_10155225197032318_3055188002402293972_o.jpg?oh=2d89029b8928e4bec3d151ac7e99b383&oe=59912318", 
+    extractInfo("https://scontent.xx.fbcdn.net/v/t31.0-8/17545367_10155225197032318_3055188002402293972_o.jpg?oh=2d89029b8928e4bec3d151ac7e99b383&oe=59912318",
     function(response) {
       this.state = {response};
     });
